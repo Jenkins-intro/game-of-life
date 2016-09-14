@@ -20,7 +20,7 @@ pipeline{
 
    stages {
       stage('Build and Package'){
-         sh "mvn clean package -Dtest=WhenYouStoreGamesInADatabase"
+         sh "mvn clean package -Dtest=WhenYouStoreGamesInADatabase -DfailIfNoTests=false"
       }
       stage ('Publish Artifact to S3'){
         wrap([$class: 'AmazonAwsCliBuildWrapper', credentialsId: 's3-cjptower', defaultRegion: 'us-west-2']) {
