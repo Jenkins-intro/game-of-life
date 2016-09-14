@@ -24,7 +24,7 @@ pipeline{
       }
       stage ('Publish Artifact to S3'){
         wrap([$class: 'AmazonAwsCliBuildWrapper', credentialsId: 's3-cjptower', defaultRegion: 'us-west-2']) {
-            sh 'aws s3 cp gameoflife-web/target/gameoflife.war s3://cjptower/gameoflife.war'
+            sh 'aws s3 cp gameoflife-web/target/gameoflife.war s3://cjptower/gameoflife.war --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers'
         }
       }
       stage ('Promote Build'){
