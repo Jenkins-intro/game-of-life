@@ -34,7 +34,7 @@ pipeline{
       }
       stage("Run Tower Playbook"){
          withTower(host:"https://104.198.10.204", credentials:"tower-cli"){
-            sh "tower-cli job launch --job-template=41 --extra-vars='target='${env.TARGET}"
+            sh "tower-cli job launch --job-template=41 --monitor --extra-vars='target='${env.TARGET}"
          }
       }   
    }
