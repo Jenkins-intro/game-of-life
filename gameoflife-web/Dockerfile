@@ -1,8 +1,6 @@
-FROM tomcat:8-jre8
+FROM jetty:alpine
 
-RUN rm -rf /usr/local/tomcat/webapps/*
+COPY target/gameoflife.war /var/lib/jetty/webapps/ROOT.war
 
-COPY target/gameoflife.war /usr/local/tomcat/webapps/ROOT.war
-
-EXPOSE 8080
-CMD ["catalina.sh", "run"]
+EXPOSE 8088
+CMD ["jetty.sh", "run"]
