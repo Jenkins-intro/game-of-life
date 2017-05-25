@@ -69,7 +69,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                echo "Deploying"
+                echo "Deploying Game of Life"
             }
         }
     }
