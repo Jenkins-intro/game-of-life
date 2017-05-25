@@ -3,10 +3,25 @@ pipeline {
 
     environment {
         ARTF = credentials('artifactory')
+        
+    }
+    
+    post {
+        failure {
+            mail to: 'team@example.com',
+                subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+                body: "Something is wrong with ${env.BUILD_URL}"
+        }
     }
 
     stages {
-        stage('Build WAR') {
+        stage('checkout') { 
+            steps {
+                git 'https://github.com/pwolfbees/game-of-life.git'
+            }
+      
+        }
+        stage('Build') {
             agent { 
                 docker {
                     reuseNode true
@@ -18,6 +33,11 @@ pipeline {
                     sh "mvn deploy -Dtest=WhenYouStoreGamesInADatabase -DfailIfNoTests=false"
                 }
             }
+            post {
+                success {
+                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/TEST-*.xml'
+                }
+            }
         }
         stage('Build Image') { 
             steps {
@@ -25,18 +45,23 @@ pipeline {
                     sh "docker build -t gameoflife ."
                 }
             }
-            post {
-                success {
-                    sh """
+        }
+        stage("Publish Image") {
+            when {
+                branch 'master'
+            }
+            steps {
+                sh """
                         docker login -u ${ARTF_USR} -p ${ARTF_PSW} pwolfbees-docker-local.jfrog.io
                         docker tag gameoflife pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife
                         docker push pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife
                     """
-                    
-                }
             }
         }
         stage('Test Image') {
+            when {
+                branch 'master'
+            }
             steps {
                 script {
                     docker.image('pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife').withRun("-d -p 8088:8080") {
@@ -45,5 +70,5 @@ pipeline {
                 }
             }
         }
-   }
+    }
 }
