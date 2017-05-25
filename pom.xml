@@ -216,6 +216,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    
+    <distributionManagement>
+    <snapshotRepository>
+        <id>snapshots</id>
+        <name>pwolfbees-snapshots</name>
+        <url>https://pwolfbees.jfrog.io/pwolfbees/libs-snapshot-local</url>
+    </snapshotRepository>
+</distributionManagement>
 
     <modules>
         <module>gameoflife-build</module>
