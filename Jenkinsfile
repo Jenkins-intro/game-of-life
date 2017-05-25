@@ -1,41 +1,49 @@
-@Library("github.com/pwolfbees/pipeline") _
+pipeline {
+    agent any
 
-pipeline{
-   agent docker:'pwolf/cjptower'
-   
-   notifications {
-        success {
-            echo "SUCCESS: ${currentBuild.fullDisplayName}"
-        }
-        failure {
-            echo "FAILURE: ${currentBuild.fullDisplayName}"
-        }
-        unstable {
-            mail to:"devops@example.com", subject:"UNSTABLE: ${currentBuild.fullDisplayName}", body: "Build unstable."
-        }
-        changed {
-            echo "CHANGED: ${currentBuild.fullDisplayName}"
-        }
+    environment {
+        ARTF = credentials('artifactory')
     }
 
-   stages {
-      stage('Build and Package'){
-         sh "mvn clean package -Dtest=WhenYouStoreGamesInADatabase -DfailIfNoTests=false"
-      }
-      stage ('Publish Artifact to S3'){
-        wrap([$class: 'AmazonAwsCliBuildWrapper', credentialsId: 's3-cjptower', defaultRegion: 'us-west-2']) {
-            sh 'aws s3 cp gameoflife-web/target/gameoflife.war s3://cjptower/gameoflife.war --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers'
+    stages {
+        stage('Build WAR') {
+            agent { 
+                docker {
+                    reuseNode true
+                    image "pwolfbees-docker-local.jfrog.io/pwolfbees:build-tools"
+                }
+            }
+            steps {
+                withMaven(mavenSettingsConfig: '41cf650a-117d-4000-9709-47a84331026b') {
+                    sh "mvn deploy -Dtest=WhenYouStoreGamesInADatabase -DfailIfNoTests=false"
+                }
+            }
         }
-      }
-      stage ('Promote Build'){
-        script{
-            env.TARGET = input message: 'Deploy Application?', ok: 'Go! Go! Go!', parameters: [choice(choices: 'Development\nStaging\nProduction', description: 'Pick Target Environment for Deployment.', name: 'TARGET')]
+        stage('Build Image') { 
+            steps {
+                dir('./gameoflife-web/') {
+                    sh "docker build -t gameoflife ."
+                }
+            }
+            post {
+                success {
+                    sh """
+                        docker login -u ${ARTF_USR} -p ${ARTF_PSW} pwolfbees-docker-local.jfrog.io
+                        docker tag gameoflife pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife
+                        docker push pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife
+                    """
+                    
+                }
+            }
         }
-      }
-      stage("Run Tower Playbook"){
-         withTower(host:"https://104.198.10.204", credentials:"tower-cli"){
-            sh "tower-cli job launch --job-template=41 --monitor --extra-vars='target='${env.TARGET}"
-         }
-      }   
+        stage('Test Image') {
+            steps {
+                script {
+                    docker.image('pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife').withRun("-d -p 8088:8080") {
+                        input 'Approve'
+                    }
+                }
+            }
+        }
    }
 }
