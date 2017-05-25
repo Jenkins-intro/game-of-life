@@ -15,12 +15,6 @@ pipeline {
     }
 
     stages {
-        stage('checkout') { 
-            steps {
-                git 'https://github.com/pwolfbees/game-of-life.git'
-            }
-      
-        }
         stage('Build') {
             agent { 
                 docker {
@@ -68,6 +62,14 @@ pipeline {
                         input 'Approve'
                     }
                 }
+            }
+        }
+        stage('Deploy Image') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo "Deploying"
             }
         }
     }
