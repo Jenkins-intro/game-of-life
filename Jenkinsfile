@@ -5,9 +5,9 @@ pipeline {
       agent {
         docker {
           reuseNode true
-          registryUrl 'https://pwolfbees-docker-local.jfrog.io'
+          registryUrl 'https://pwolfbees.jfrog.io'
           registryCredentialsId 'artifactory'
-          image 'pwolfbees:build-tools'
+          image 'pwolfbees-docker-local.jfrog.io/pwolfbees:build-tools'
         }
         
       }
