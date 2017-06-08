@@ -50,7 +50,7 @@ pipeline {
       steps {
         script {
           docker.image('pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife').withRun("-d -p 8088:8080") {
-            input 'Approve'
+            input 'Is this running okay?'
           }
         }
         
