@@ -7,7 +7,7 @@ pipeline {
           reuseNode true
           registryUrl 'https://pwolfbees-docker-local.jfrog.io'
           registryCredentialsId 'artifactory'
-          image 'pwolfbees-docker-local.jfrog.io/pwolfbees:build-tools'
+          image 'pwolfbees:build-tools'
         }
         
       }
