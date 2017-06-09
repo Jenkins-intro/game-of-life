@@ -38,11 +38,10 @@ pipeline {
         branch 'master'
       }
       steps {
-        sh '''"""
-                        
-                        docker tag gameoflife pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife
-                        docker push pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife
-                    """'''
+        sh """
+           docker tag gameoflife pwolfbees:gameoflife
+           docker push pwolfbees:gameoflife
+           """
       }
     }
     stage('Test Image') {
