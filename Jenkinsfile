@@ -5,14 +5,13 @@ pipeline {
       agent {
         docker {
           reuseNode true
-          registryUrl 'https://pwolfbees-docker-local.jfrog.io'
+          registryUrl 'https://pwolfbees-docker-remote.jfrog.io'
           registryCredentialsId 'artifactory'
-          image 'pwolfbees:build-tools'
+          image '3.5.0-jdk-8'
         }
         
       }
       steps {
-        
           sh 'mvn clean install -DskipTests -DfailIfNoTests=false'
       }
       post {
@@ -36,10 +35,8 @@ pipeline {
       }
       steps {
         sh """
-           docker ps -a
-           docker images
-           docker tag gameoflife pwolfbees-docker-local.jfrog.io/pwolfbees:foo
-           docker push pwolfbees-docker-local.jfrog.io/pwolfbees:foo
+           docker tag gameoflife pwolfbees-docker-local.jfrog.io/pwolfbees/gameoflife:snapshot1.0
+           docker push pwolfbees-docker-local.jfrog.io/pwolfbees/gameoflife:snapshot1.0
            """
       }
     }
@@ -49,9 +46,7 @@ pipeline {
       }
       steps {
         script {
-          docker.image('pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife').withRun("-d -p 8088:8080") {
-            input 'Is this running okay?'
-          }
+          echo "Testing"
         }
         
       }
@@ -62,11 +57,6 @@ pipeline {
       }
       steps {
         echo 'Deploying Game of Life'
-      }
-    }
-    stage('Clean Up') {
-      steps {
-        deleteDir()
       }
     }
   }
