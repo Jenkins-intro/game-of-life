@@ -39,8 +39,8 @@ pipeline {
       }
       steps {
         sh """
-           docker tag gameoflife pwolfbees:gameoflife
-           docker push pwolfbees:gameoflife
+           docker tag gameoflife pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife
+           docker push pwolfbees-docker-local.jfrog.io/gameoflife/pwolfbees:gameoflife
            """
       }
     }
