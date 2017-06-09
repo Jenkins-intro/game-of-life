@@ -14,13 +14,10 @@ pipeline {
       steps {
         
           sh 'mvn clean install -DskipTests -DfailIfNoTests=false'
-        
-        
       }
       post {
-        success {
+        always {
           junit(allowEmptyResults: true, testResults: '**/target/surefire-reports/TEST-*.xml')
-          
         }
         
       }
@@ -39,6 +36,8 @@ pipeline {
       }
       steps {
         sh """
+           docker ps -a
+           docker images
            docker push pwolfbees-docker-local.jfrog.io/gameoflife/pwolfbees:gameoflife
            """
       }
