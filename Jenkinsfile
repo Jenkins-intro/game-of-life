@@ -25,7 +25,7 @@ pipeline {
     stage('Build Image') {
       steps {
         dir(path: './gameoflife-web/') {
-          sh 'docker build -t gameoflife .'
+          sh 'docker build -t pwolfbees-docker-local.jfrog.io/gameoflife/pwolfbees/gameoflife .'
         }
         
       }
@@ -38,7 +38,7 @@ pipeline {
         sh """
            docker ps -a
            docker images
-           docker push pwolfbees-docker-local.jfrog.io/gameoflife/pwolfbees:gameoflife
+           docker push pwolfbees-docker-local.jfrog.io/gameoflife/pwolfbees/gameoflife
            """
       }
     }
