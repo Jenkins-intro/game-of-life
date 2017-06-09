@@ -12,9 +12,9 @@ pipeline {
         
       }
       steps {
-        withMaven(mavenSettingsConfig: '41cf650a-117d-4000-9709-47a84331026b') {
-          sh 'mvn deploy -Dtest=WhenYouStoreGamesInADatabase -DfailIfNoTests=false'
-        }
+        
+          sh 'mvn clean install -Dtest=WhenYouStoreGamesInADatabase -DfailIfNoTests=false'
+        
         
       }
       post {
