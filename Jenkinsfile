@@ -7,7 +7,7 @@ pipeline {
           reuseNode true
           registryUrl 'https://pwolfbees-docker-remote.jfrog.io'
           registryCredentialsId 'artifactory'
-          image '3.5.0-jdk-8'
+          image 'maven:3.5.0-jdk-8'
         }
         
       }
