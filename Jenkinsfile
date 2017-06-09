@@ -5,7 +5,7 @@ pipeline {
       agent {
         docker {
           reuseNode true
-          registryUrl 'https://pwolfbees-docker-remote.jfrog.io'
+          registryUrl 'https://pwolfbees-docker.jfrog.io'
           registryCredentialsId 'artifactory'
           image 'maven:3.5.0-jdk-8'
         }
@@ -35,8 +35,8 @@ pipeline {
       }
       steps {
         sh """
-           docker tag gameoflife pwolfbees-docker-local.jfrog.io/pwolfbees/gameoflife:snapshot1.0
-           docker push pwolfbees-docker-local.jfrog.io/pwolfbees/gameoflife:snapshot1.0
+           docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:snapshot1.0
+           docker push pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:snapshot1.0
            """
       }
     }
