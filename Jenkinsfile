@@ -13,7 +13,7 @@ pipeline {
       }
       steps {
         
-          sh 'mvn clean install -Dtest=WhenYouStoreGamesInADatabase -DfailIfNoTests=false'
+          sh 'mvn clean install -DskipTests -DfailIfNoTests=false'
         
         
       }
