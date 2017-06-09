@@ -39,7 +39,7 @@ pipeline {
       }
       steps {
         sh '''"""
-                        docker login -u ${ARTF_USR} -p ${ARTF_PSW} pwolfbees-docker-local.jfrog.io
+                        
                         docker tag gameoflife pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife
                         docker push pwolfbees-docker-local.jfrog.io/pwolfbees:gameoflife
                     """'''
