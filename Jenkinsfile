@@ -4,6 +4,7 @@ pipeline {
   environment {
     VERSION = readMavenPom().getVersion()
     IMAGE = readMavenPom().getArtifactId()
+    ENVIRONMENT = "staging-demo"
   }
   
   stages {
@@ -54,9 +55,6 @@ pipeline {
         not {
            branch 'master'
         }
-      }
-      environment {
-        ENVIRONMENT = "staging-demo"
       }
       steps {
         sh """
