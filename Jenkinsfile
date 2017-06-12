@@ -42,7 +42,9 @@ pipeline {
     }
     stage('Publish Image - Staging') {
       when {
-        branch '^(?!.*master).*$'
+        not {
+           branch 'master'
+        }
       }
       steps {
         sh """
