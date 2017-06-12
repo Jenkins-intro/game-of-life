@@ -44,10 +44,13 @@ pipeline {
       when {
         branch 'master'
       }
+      environment {
+	REPO = "pwolfbees-docker.jfrog.io/pwolfbees/release"
+      }
       steps {
         sh """
-           docker tag ${IMAGE} pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
-           docker push pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
+           docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION}
+           docker push ${REPO}/${IMAGE}:${VERSION}
            """
       }
     }
@@ -58,10 +61,13 @@ pipeline {
            branch 'master'
         }
       }
+      environment {
+	REPO = "pwolfbees-docker.jfrog.io/pwolfbees/release"
+      }
       steps {
         sh """
-           docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}
-           docker push pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}
+           docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION}
+           docker push ${REPO}/${IMAGE}:${VERSION}
            """
       }
     }
