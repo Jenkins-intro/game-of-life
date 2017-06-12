@@ -41,13 +41,7 @@ pipeline {
       }
     }
     
-    stage('Publish Image - Production') {
-      when {
-        branch 'master'
-      }
-      environment {
-	REPO = "pwolfbees-docker.jfrog.io/pwolfbees/release"
-      }
+    stage('Publish Image') {
       steps {
         sh """
            docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION}
@@ -55,30 +49,12 @@ pipeline {
            """
       }
     }
-    
-    stage('Publish Image - Staging') {
-      when {
-        not {
-           branch 'master'
-        }
-      }
-      environment {
-	REPO = "pwolfbees-docker.jfrog.io/pwolfbees/release"
-      }
-      steps {
-        sh """
-           docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION}
-           docker push ${REPO}/${IMAGE}:${VERSION}
-           """
-      }
-    }
-    
     stage('Deploy to Production') {
       when {
         branch 'master'
       }
       steps {
-        build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'production-demo'), string(name: 'service', value: "${IMAGE}-service")]
+	      build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'production-demo'), string(name: 'service', value: "${IMAGE}-service")]
       }
     }
     
@@ -89,14 +65,14 @@ pipeline {
         }
       }
       steps {
-        build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'staging-demo'), string(name: 'service', value: "${IMAGE}-service")]
+	      build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'staging-demo'), string(name: 'service', value: "${IMAGE}-service")]
       }
     }
   }
   
   post {
-    always {
-	    echo "${REPO}"
+    success {
+      mail(to: 'team@example.com', subject: "Pipeline Complete: ${currentBuild.fullDisplayName}", body: "${IMAGE}:${VERSION} Was successfully deployed. ${env.BUILD_URL}")
     }
     failure {
       mail(to: 'team@example.com', subject: "Failed Pipeline: ${currentBuild.fullDisplayName}", body: "Something is wrong with ${env.BUILD_URL}")  
