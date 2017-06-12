@@ -44,6 +44,7 @@ pipeline {
         ENVIRONMENT = "production-demo"
       }
       steps {
+        echo "${ENVIRONMENT}"
         sh """
            docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
            docker push pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
