@@ -64,7 +64,7 @@ pipeline {
         branch 'master'
       }
       steps {
-        build job: 'ecsdeploy', parameters: [string(name: 'image', value: "pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'production-demo'), string(name: 'service', value: "${IMAGE}-service")]
+        build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'production-demo'), string(name: 'service', value: "${IMAGE}-service")]
       }
     }
     stage('Deploy to Staging') {
