@@ -46,7 +46,7 @@ pipeline {
       }
       steps {
         sh """
-           docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
+           docker tag ${IMAGE} pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
            docker push pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
            """
       }
