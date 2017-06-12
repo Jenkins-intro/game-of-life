@@ -59,7 +59,7 @@ pipeline {
            """
       }
     }
-    stage('Deploy Image') {
+    stage('Deploy to Production') {
       when {
         branch 'master'
       }
@@ -67,7 +67,7 @@ pipeline {
         build job: 'ecsdeploy', parameters: [string(name: 'image', value: "pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'production-demo'), string(name: 'service', value: "${IMAGE}-service")]
       }
     }
-    stage('Deploy Image') {
+    stage('Deploy to Staging') {
       when {
         not {
           branch 'master'
