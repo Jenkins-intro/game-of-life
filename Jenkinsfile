@@ -29,26 +29,26 @@ pipeline {
         
       }
     }
-    stage('Publish Image') {
+    stage('Publish Image - Production') {
       when {
         branch 'master'
       }
       steps {
         sh """
-           docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:snapshot1.0
-           docker push pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:snapshot1.0
+           docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:1.0
+           docker push pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:1.0
            """
       }
     }
-    stage('Test Image') {
+    stage('Publish Image - Staging') {
       when {
-        branch 'master'
+        branch '^(?!.*master).*$'
       }
       steps {
-        script {
-          echo "Testing"
-        }
-        
+        sh """
+           docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:snapshot-1.0
+           docker push pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:snapshot-1.0
+           """
       }
     }
     stage('Deploy Image') {
@@ -60,14 +60,9 @@ pipeline {
       }
     }
   }
-  environment {
-    ARTF = credentials('artifactory')
-  }
   post {
     failure {
-      mail(to: 'team@example.com', subject: "Failed Pipeline: ${currentBuild.fullDisplayName}", body: "Something is wrong with ${env.BUILD_URL}")
-      
+      mail(to: 'team@example.com', subject: "Failed Pipeline: ${currentBuild.fullDisplayName}", body: "Something is wrong with ${env.BUILD_URL}")  
     }
-    
   }
 }
