@@ -8,6 +8,7 @@ pipeline {
   environment {
     VERSION = readMavenPom().getVersion()
     IMAGE = readMavenPom().getArtifactId()
+    REPO = "pwolfbees-docker.jfrog.io/pwolfbees/${BRANCH_NAME = 'master' ? 'release' : 'staging'}"
   }
   
   stages {
