@@ -3,6 +3,7 @@ pipeline {
   
   environment {
     VERSION = readMavenPom().getVersion()
+    IMAGE = readMavenPom().getArtifactId()
   }
   
   stages {
@@ -17,7 +18,6 @@ pipeline {
         
       }
       steps {
-        echo "${VERSION}"
           sh 'mvn clean install -DskipTests -DfailIfNoTests=false'
       }
       post {
@@ -30,7 +30,7 @@ pipeline {
     stage('Build Image') {
       steps {
         dir(path: './gameoflife-web/') {
-          sh 'docker build -t gameoflife .'
+          sh "docker build -t ${IMAGE} . "
         }
         
       }
@@ -39,10 +39,13 @@ pipeline {
       when {
         branch 'master'
       }
+      environment {
+        ENVIRONMENT = "production-demo"
+      }
       steps {
         sh """
-           docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:1.0
-           docker push pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:1.0
+           docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
+           docker push pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
            """
       }
     }
@@ -52,10 +55,13 @@ pipeline {
            branch 'master'
         }
       }
+      environment {
+        ENVIRONMENT = "staging-demo"
+      }
       steps {
         sh """
-           docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:snapshot-1.0
-           docker push pwolfbees-docker.jfrog.io/pwolfbees/gameoflife:snapshot-1.0
+           docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}
+           docker push pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}
            """
       }
     }
@@ -64,7 +70,7 @@ pipeline {
         branch 'master'
       }
       steps {
-        echo 'Deploying Game of Life'
+        echo "${ENVIRONMENT}"
       }
     }
   }
