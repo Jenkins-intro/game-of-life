@@ -1,6 +1,10 @@
 pipeline {
   agent { label "docker" }
   
+  options {
+		buildDiscarder(logRotator(numToKeepStr:'10')) // Keep the 10 most recent builds
+	}
+  
   environment {
     VERSION = readMavenPom().getVersion()
     IMAGE = readMavenPom().getArtifactId()
@@ -23,10 +27,10 @@ pipeline {
       post {
         always {
           junit(allowEmptyResults: true, testResults: '**/target/surefire-reports/TEST-*.xml')
-        }
-        
+        } 
       }
     }
+    
     stage('Build Image') {
       steps {
         dir(path: './gameoflife-web/') {
@@ -35,6 +39,7 @@ pipeline {
         
       }
     }
+    
     stage('Publish Image - Production') {
       when {
         branch 'master'
@@ -46,6 +51,7 @@ pipeline {
            """
       }
     }
+    
     stage('Publish Image - Staging') {
       when {
         not {
@@ -59,6 +65,7 @@ pipeline {
            """
       }
     }
+    
     stage('Deploy to Production') {
       when {
         branch 'master'
@@ -67,6 +74,7 @@ pipeline {
         build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'production-demo'), string(name: 'service', value: "${IMAGE}-service")]
       }
     }
+    
     stage('Deploy to Staging') {
       when {
         not {
@@ -78,6 +86,7 @@ pipeline {
       }
     }
   }
+  
   post {
     failure {
       mail(to: 'team@example.com', subject: "Failed Pipeline: ${currentBuild.fullDisplayName}", body: "Something is wrong with ${env.BUILD_URL}")  
