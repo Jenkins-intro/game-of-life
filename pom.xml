@@ -76,27 +76,7 @@
                 </executions>
             </plugin>
             <!-- CODE COVERAGE -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.2.201409121644</version>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-site</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+           
 
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
@@ -122,60 +102,14 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.easyb</groupId>
-                <artifactId>maven-easyb-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <storyType>html</storyType>
-                    <storyReport>target/easyb/easyb.html</storyReport>
-                    <easybTestDirectory>src/test/stories</easybTestDirectory>
-                    <jvmArguments>-Xmx512m -Dwebdriver.driver=${webdriver.driver}</jvmArguments>
-                </configuration>
-            </plugin>
+           
 
-            <plugin>
-                <groupId>com.jelastic</groupId>
-                <artifactId>jelastic-maven-plugin</artifactId>
-                <version>1.6</version>
-                <configuration>
-                    <email>${jelastic.username}</email>
-                    <password>${jelastic.password}</password>
-                    <context>${jelastic.context}</context>
-                    <environment>${jelastic.environment}</environment>
-                    <api_hoster>app.jelastic.servint.net</api_hoster>
-                </configuration>
-            </plugin>
 
         </plugins>
 
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.easyb</groupId>
-                    <artifactId>maven-easyb-plugin</artifactId>
-                    <version>${easyb.version}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>test</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <storyType>html</storyType>                         l
-                        <storyReport>${basedir}/target/easyb/easyb-report.html
-                        </storyReport>
-                    </configuration>
-                </plugin>
-
+                
             </plugins>
         </pluginManagement>
         <extensions>
@@ -186,16 +120,7 @@
             </extension>
         </extensions>
     </build>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.easyb</groupId>
-                <artifactId>easyb-core</artifactId>
-                <version>${easyb.version}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
