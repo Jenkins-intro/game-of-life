@@ -65,7 +65,7 @@ pipeline {
         }
       }
       steps {
-	      build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'staging-demo'), string(name: 'service', value: "${IMAGE}-service")]
+	      build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'staging-demo'), string(name: 'service', value: "sample-webapp")]
       }
     }
   }
