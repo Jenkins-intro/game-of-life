@@ -4,7 +4,6 @@ pipeline {
   environment {
     VERSION = readMavenPom().getVersion()
     IMAGE = readMavenPom().getArtifactId()
-    ENVIRONMENT = "staging-demo"
   }
   
   stages {
@@ -40,11 +39,7 @@ pipeline {
       when {
         branch 'master'
       }
-      environment {
-        ENVIRONMENT = "production-demo"
-      }
       steps {
-        echo "${ENVIRONMENT}"
         sh """
            docker tag gameoflife pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
            docker push pwolfbees-docker.jfrog.io/pwolfbees/release/${IMAGE}:${VERSION}
@@ -69,7 +64,17 @@ pipeline {
         branch 'master'
       }
       steps {
-        echo "${ENVIRONMENT}"
+        build job: 'ecsdeploy', parameters: [string(name: 'image', value: "pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'production-demo'), string(name: 'service', value: "${IMAGE}-service")]
+      }
+    }
+    stage('Deploy Image') {
+      when {
+        not {
+          branch 'master'
+        }
+      }
+      steps {
+        build job: 'ecsdeploy', parameters: [string(name: 'image', value: "pwolfbees-docker.jfrog.io/pwolfbees/staging/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'staging-demo'), string(name: 'service', value: "${IMAGE}-service")]
       }
     }
   }
