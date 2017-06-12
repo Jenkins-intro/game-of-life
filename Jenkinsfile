@@ -1,5 +1,10 @@
 pipeline {
   agent { label "docker" }
+  
+  environment {
+    VERSION = readMavenPom().getVersion()
+  }
+  
   stages {
     stage('Build') {
       agent {
@@ -12,6 +17,7 @@ pipeline {
         
       }
       steps {
+        echo "${VERSION}"
           sh 'mvn clean install -DskipTests -DfailIfNoTests=false'
       }
       post {
