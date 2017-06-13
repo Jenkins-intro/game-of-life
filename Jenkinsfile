@@ -58,9 +58,7 @@ pipeline {
     
     stage('Publish Snapshot Image') {
 	    when {
-		 not {
-		   branch 'master'
-		 }
+		   branch 'staging'
 	    }
 	    environment {
     		VERSION = readMavenPom().getVersion()
