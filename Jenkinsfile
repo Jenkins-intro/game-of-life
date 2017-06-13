@@ -2,14 +2,9 @@ pipeline {
   agent { label "docker" }
   
   options {
-		buildDiscarder(logRotator(numToKeepStr:'10')) // Keep the 10 most recent builds
-	}
-  
-  environment {
-    VERSION = "${BRANCH_NAME = 'master' ? readMavenPom().getVersion().replace('-SNAPSHOT', '.' + BUILD_NUMBER) : readMavenPom().getVersion()}"
-    IMAGE = readMavenPom().getArtifactId()
-    REPO = "pwolfbees-docker.jfrog.io/pwolfbees/${BRANCH_NAME = 'master' ? 'release' : 'staging'}"
+	  buildDiscarder(logRotator(numToKeepStr:'10')) // Keep the 10 most recent builds
   }
+  
   
   stages {
     stage('Build') {
@@ -41,38 +36,47 @@ pipeline {
       }
     }
     
-    stage('Publish Image') {
+    stage('Publish Release Image') {
+	    when {
+		    branch 'master'
+	    }
+	    environment {
+    		VERSION = readMavenPom().getVersion().replace('-SNAPSHOT', '.' + currentBuild.number)
+    		IMAGE = readMavenPom().getArtifactId()
+    		REPO = "pwolfbees-docker.jfrog.io/pwolfbees/release"
+  	    }
       steps {
         sh """
-           docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION}
+           docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION} ${REPO}/${IMAGE}:latest
+	   docker tag ${IMAGE} 
            docker push ${REPO}/${IMAGE}:${VERSION}
            """
-      }
-    }
-    stage('Deploy to Production') {
-      when {
-        branch 'master'
-      }
-      steps {
-	      build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'production-demo'), string(name: 'service', value: "gameoflife-service")]
+	build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'production-demo'), string(name: 'service', value: "gameoflife-service")]
       }
     }
     
-    stage('Deploy to Staging') {
-      when {
-        not {
-          branch 'master'
-        }
-      }
+    stage('Publish Snapshot Image') {
+	    when {
+		    branch 'master'
+	    }
+	    environment {
+    		VERSION = readMavenPom().getVersion()
+    		IMAGE = readMavenPom().getArtifactId()
+    		REPO = "pwolfbees-docker.jfrog.io/pwolfbees/staging"
+  	    }
       steps {
-	      build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'staging-demo'), string(name: 'service', value: "sample-webapp")]
+        sh """
+           docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION} ${REPO}/${IMAGE}:latest
+	   docker tag ${IMAGE} 
+           docker push ${REPO}/${IMAGE}:${VERSION}
+           """
+	build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'staging-demo'), string(name: 'service', value: "gameoflife-service")]
       }
     }
-  }
   
   post {
     success {
-      mail(to: 'team@example.com', subject: "Pipeline Complete: ${currentBuild.fullDisplayName}", body: "${IMAGE}:${VERSION} Was successfully deployed. ${env.BUILD_URL}")
+      mail(to: 'team@example.com', subject: "Pipeline Complete: ${currentBuild.fullDisplayName}", body: "Was successfully deployed. ${env.BUILD_URL}")
     }
     failure {
       mail(to: 'team@example.com', subject: "Failed Pipeline: ${currentBuild.fullDisplayName}", body: "Something is wrong with ${env.BUILD_URL}")  
