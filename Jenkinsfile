@@ -49,8 +49,7 @@ pipeline {
   	    }
 	    steps {
 		    sh """
-		    docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION} ${REPO}/${IMAGE}:latest
-		    docker tag ${IMAGE} 
+		    docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION} 
 		    docker push ${REPO}/${IMAGE}:${VERSION}
 		    """
 		    build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'production-demo'), string(name: 'service', value: "gameoflife-service")]
@@ -67,7 +66,7 @@ pipeline {
   	    }
 	    steps {
 		    sh """
-		    docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION} ${REPO}/${IMAGE}:latest
+		    docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION}
 		    docker push ${REPO}/${IMAGE}:${VERSION}
 		    """
 		    build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'staging-demo'), string(name: 'service', value: "gameoflife-service")]
