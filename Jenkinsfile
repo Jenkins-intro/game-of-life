@@ -58,7 +58,9 @@ pipeline {
     
     stage('Publish Snapshot Image') {
 	    when {
-		    branch 'master'
+		 not {
+		   branch 'master'
+		 }
 	    }
 	    environment {
     		VERSION = readMavenPom().getVersion()
@@ -76,10 +78,10 @@ pipeline {
   
   post {
     success {
-      mail(to: 'team@example.com', subject: "Pipeline Complete: ${currentBuild.fullDisplayName}", body: "Was successfully deployed. ${env.BUILD_URL}")
+      mail(to: 'kvissa@cloudbees.com', subject: "Pipeline Complete: ${currentBuild.fullDisplayName}", body: "Was successfully deployed. ${env.BUILD_URL}")
     }
     failure {
-      mail(to: 'team@example.com', subject: "Failed Pipeline: ${currentBuild.fullDisplayName}", body: "Something is wrong with ${env.BUILD_URL}")  
+      mail(to: 'kvissa@cloudbees.com', subject: "Failed Pipeline: ${currentBuild.fullDisplayName}", body: "Something is wrong with ${env.BUILD_URL}")  
     }
   }
 }
