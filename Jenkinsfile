@@ -52,7 +52,11 @@ pipeline {
 		    docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION} 
 		    docker push ${REPO}/${IMAGE}:${VERSION}
 		    """
-		    build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'gameoflife-prod'), string(name: 'service', value: "gameoflife-service")]
+		    milestone
+		    lock(inversePrecedence: true, quantity: 1, resource: 'ecsDeploy') {
+		    	build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'gameoflife-prod'), string(name: 'service', value: "gameoflife-service")]
+		    	milestone
+		    }
 	    }
     }
     
