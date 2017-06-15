@@ -7,7 +7,7 @@ pipeline {
   
   environment {
 	  IMAGE = readMavenPom().getArtifactId()
-	  REGISTRY = "pwolfbees-docker.jfrog.io"
+	  REGISTRY = readProperties(file: "Jenkinsfile.properties")['registry']
 	  DOCKCREDS = 'artifactory'
   }
     
@@ -37,7 +37,6 @@ pipeline {
         dir(path: './gameoflife-web/') {
           sh "docker build -t ${IMAGE} . "
         }
-        
       }
     }
     
