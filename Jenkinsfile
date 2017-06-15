@@ -6,7 +6,7 @@ pipeline {
     }
     environment {
 	  IMAGE = readMavenPom().getArtifactId()
-	  REGISTRY = "${readProperties(file: 'Jenkinsfile.properties')['registry']}"
+	  REGISTRY = readProperties(file: 'Jenkinsfile.properties')['registry']
 	  DOCKCREDS = 'artifactory'
     }
     
