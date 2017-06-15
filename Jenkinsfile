@@ -7,7 +7,7 @@ pipeline {
   
   environment {
 	  IMAGE = readMavenPom().getArtifactId()
-	  REGISTRY = readProperties(file: "Jenkinsfile.properties")['registry']
+	  REGISTRY = "${readProperties(file: 'Jenkinsfile.properties')['registry']}"
 	  DOCKCREDS = 'artifactory'
   }
     
@@ -53,10 +53,10 @@ pipeline {
 		    docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION} 
 		    docker push ${REPO}/${IMAGE}:${VERSION}
 		    """
-		    milestone
+		    milestone(10)
 		    lock(inversePrecedence: true, quantity: 1, resource: 'ecsDeploy') {
 		    	build job: 'ECS Deployment/ecsdeploy', parameters: [string(name: 'image', value: "${REPO}/${IMAGE}:${VERSION}"), string(name: 'environment', value: 'gameoflife-prod'), string(name: 'service', value: "gameoflife-service")]
-		    	milestone
+		    	milestone(20)
 		    }
 	    }
     }
