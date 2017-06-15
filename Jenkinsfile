@@ -14,8 +14,8 @@ pipeline {
             agent {
                 docker {
                     reuseNode true
-                    registryUrl "${REGISTRY}"
-                    registryCredentialsId "${DOCKCREDS}"
+                    registryUrl "pwolfbees-docker.jfrog.io"
+                    registryCredentialsId "artifactory"
                     image 'maven:3.5.0-jdk-8'
                 }
             }
