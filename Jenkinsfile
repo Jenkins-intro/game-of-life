@@ -7,16 +7,18 @@ pipeline {
   
   environment {
 	  IMAGE = readMavenPom().getArtifactId()
+	  REGISTRY = "pwolfbees-docker.jfrog.io"
+	  DOCKCREDS = 'artifactory'
   }
     
   stages {
     stage('Build') {
       agent {
         docker {
-          reuseNode true
-          registryUrl 'https://pwolfbees-docker.jfrog.io'
-          registryCredentialsId 'artifactory'
-          image 'maven:3.5.0-jdk-8'
+			reuseNode true
+			registryUrl "${REGISTRY}"
+			registryCredentialsId "${DOCKCREDS}"
+			image 'maven:3.5.0-jdk-8'
         }
         
       }
@@ -45,7 +47,7 @@ pipeline {
 	    }
 	    environment {
     		VERSION = readMavenPom().getVersion().replace('-SNAPSHOT', '.' + currentBuild.number)
-    		REPO = "pwolfbees-docker.jfrog.io/pwolfbees/release"
+			REPO = "${REGISTRY}/release"
   	    }
 	    steps {
 		    sh """
@@ -66,7 +68,7 @@ pipeline {
 	    }
 	    environment {
     		VERSION = readMavenPom().getVersion()
-    		REPO = "pwolfbees-docker.jfrog.io/pwolfbees/staging"
+			REPO = "${REGISTRY}/staging"
   	    }
 	    steps {
 		    sh """
