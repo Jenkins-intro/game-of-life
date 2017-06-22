@@ -1,8 +1,5 @@
 pipeline {
     agent any  // Run everything on an agent with the docker daemon
-    options {
-	  buildDiscarder(logRotator(numToKeepStr:'10')) // Keep the 10 most recent builds
-    }
     environment {
         IMAGE = readMavenPom().getArtifactId()  // Using Pipeline Utility Steps plugin read the pom.xml file to get Artifact ID
     }
