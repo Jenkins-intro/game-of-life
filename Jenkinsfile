@@ -23,23 +23,6 @@ pipeline {
                 }
             }
         }
-        stage('Quality Analysis') {
-			environment {
-				SONAR = credentials('sonar')  // use the credentials defined for running Sonar tests
-			}
-            parallel {   // run Sonar Scan and Integration tests in parallel
-                stage ("Integration Test") {
-                    steps {
-						echo 'Run integration tests here...'
-                    }
-                }
-                stage("Sonar Scan") {
-                    steps {
-                        sh "mvn sonar:sonar -Dsonar.host.url=http://sonar.beedemo.net:9000 -Dsonar.organization=$SONAR_USR -Dsonar.login=$SONAR_PSW"
-					}
-                }
-			}
-		}
         stage('Build Image') {  
             steps {
                 dir(path: './gameoflife-web/') {  // shift to the target directory
