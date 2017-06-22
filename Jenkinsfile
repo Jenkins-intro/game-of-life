@@ -6,7 +6,7 @@ pipeline {
     environment {
         IMAGE = readMavenPom().getArtifactId()  // Using Pipeline Utility Steps plugin read the pom.xml file to get Artifact ID
     }
-    stages {
+    stages {    
         stage('Build') {
             agent {
                 docker {
@@ -52,7 +52,6 @@ pipeline {
                     milestone(20)  // set a second milestone. This milestone will abort any older builds still waiting to run.
                 }
             }
-          }
         }
     }
     post {
