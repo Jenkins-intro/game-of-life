@@ -1,5 +1,5 @@
 pipeline {
-    agent { label "docker" }  // Run everything on an agent with the docker daemon
+    agent any  // Run everything on an agent with the docker daemon
     options {
 	  buildDiscarder(logRotator(numToKeepStr:'10')) // Keep the 10 most recent builds
     }
