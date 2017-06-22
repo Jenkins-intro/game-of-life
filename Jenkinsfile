@@ -15,7 +15,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn clean install'  //runs mvn inside the docker container
+                sh 'mvn clean install -Dmaven.test.skip=true'  //runs mvn inside the docker container
             }
             post {
                 always {
@@ -58,7 +58,7 @@ pipeline {
             steps {
                 sh """
                 docker tag ${IMAGE} ${REPO}/${IMAGE}:${VERSION}
-                docker push ${REPO}/${IMAGE}:${VERSION}  //tag and push the newly created image to my registry
+                //docker push ${REPO}/${IMAGE}:${VERSION}  //tag and push the newly created image to my registry
                 """
                 milestone(10)  // set a milestone to handle concurrent runs of this pipeline.
                 lock(inversePrecedence: true, quantity: 1, resource: 'ecsDeploy') {  // only allow one concurrent run of these steps at once.
