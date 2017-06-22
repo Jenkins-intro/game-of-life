@@ -32,7 +32,7 @@ pipeline {
                 branch 'master'  //only run these steps on the master branch
             }
             environment {
-                VERSION = readMavenPom().getVersion().replace('-SNAPSHOT', '.' + currentBuild.number)  // read pom.xml to get Version 
+                VERSION = '1.0' //readMavenPom().getVersion().replace('-SNAPSHOT', '.' + currentBuild.number)  // read pom.xml to get Version 
                 REPO = "myregistry.url/release"  // set the name for the registry
             }
             steps {
