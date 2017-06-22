@@ -1,7 +1,7 @@
 pipeline {
     agent any  // Run everything on an agent with the docker daemon
     environment {
-        IMAGE = readMavenPom().getArtifactId()  // Using Pipeline Utility Steps plugin read the pom.xml file to get Artifact ID
+        IMAGE = "gameoflife" //readMavenPom().getArtifactId() Using Pipeline Utility Steps plugin read the pom.xml file to get Artifact ID
     }
     stages {    
         stage('Build') {
